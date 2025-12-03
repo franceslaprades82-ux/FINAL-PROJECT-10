@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Incident Logs</title>
+<link rel="stylesheet" href="/styles.css">
+</head>
+
+<body class="new-ui">
+
+<div class="ui-sidebar">
+    <h2>Noise Monitor</h2>
+    <ul>
+        <li><a href="/">Dashboard</a></li>
+        <li><a class="active" href="/incidents">Incident Logs</a></li>
+    </ul>
+</div>
+
+<div class="ui-main">
+<div class="ui-container">
+    
+    <header class="ui-header">
+        <h1>Incident Logs</h1>
+        <a href="/logout" class="logout-chip">Logout</a>
+    </header>
+
+    <section class="ui-card wide">
+        <h3>Noise Alert History</h3>
+
+        <table class="ui-table" id="incident-table">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Noise (dB)</th>
+                    <th>Alerted</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </section>
+
+</div>
+</div>
+
+<script>
+async function loadIncidents() {
+    const res = await fetch('/api/incidents');
+    const data = await res.json();
+    const tbody = document.querySelector('#incident-table tbody');
+    tbody.innerHTML = '';
+    data.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${item.timestamp}</td>
+            <td>${item.noise}</td>
+            <td>${item.alerted ? "Yes" : "No"}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+loadIncidents();
+setInterval(loadIncidents, 2000);
+</script>
+
+</body>
+</html>

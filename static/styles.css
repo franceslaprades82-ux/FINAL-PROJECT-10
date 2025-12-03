@@ -1,0 +1,321 @@
+/* ------------------------- GLOBAL MODERN UI THEME ------------------------- */
+body.new-ui {
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    background: linear-gradient(120deg, #e8f1ff, #e5fff5);
+    color: #1d1d1d;
+}
+
+/* ------------------------- SIDEBAR ------------------------- */
+.ui-sidebar {
+    width: 230px;
+    height: 100vh;
+    padding: 25px 15px;
+    background: rgba(255,255,255,0.6); /* Lowered opacity for sidebar */
+    border-right: 1px solid #dbe3ee;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.ui-sidebar h2 {
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 25px;
+}
+
+.ui-sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.ui-sidebar ul li {
+    margin: 12px 0;
+}
+
+.ui-sidebar a {
+    display: block;
+    padding: 12px 18px;
+    border-radius: 12px;
+    font-weight: 500;
+    color: #333;
+    text-decoration: none;
+    transition: 0.25s;
+}
+
+.ui-sidebar a:hover,
+.ui-sidebar a.active {
+    background: #d5efff;
+    color: #007ecb;
+}
+
+/* ------------------------- MAIN WRAPPER ------------------------- */
+.ui-main {
+    margin-left: 240px;
+    padding: 30px;
+}
+
+.ui-container {
+    max-width: 1100px;
+    margin: auto;
+}
+
+/* ------------------------- HEADER ------------------------- */
+.ui-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logout-chip {
+    background: #fff;
+    padding: 8px 14px;
+    border-radius: 12px;
+    border: 1px solid #d8d8d8;
+    text-decoration: none;
+    color: #555;
+    font-weight: 500;
+}
+
+/* ------------------------- GRID LAYOUT ------------------------- */
+.ui-grid {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.ui-card {
+    background: white;
+    padding: 20px;
+    border-radius: 18px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    box-sizing: border-box;
+}
+
+.ui-card.wide {
+    grid-column: span 2;
+}
+
+/* ------------------------- CAMERA ------------------------- */
+.cam-flex {
+    display: flex;
+    align-items: center;
+}
+
+.cam-flex img {
+    width: 420px;
+    border-radius: 14px;
+}
+
+.status-chip {
+    margin-left: 15px;
+    padding: 6px 12px;
+    border-radius: 12px;
+    background: #eef3ff;
+}
+
+/* ------------------------- TABLE STYLE ------------------------- */
+.ui-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.ui-table th {
+    background: #d5eaff;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.ui-table td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.ui-table tr:hover {
+    background: #f5fbff;
+}
+
+/* ------------------------- BUTTONS & INPUTS ------------------------- */
+.primary-btn {
+    background: #0099ff;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.secondary-btn {
+    background: #ececec;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 12px;
+}
+
+.save-btn {
+    margin-top: 6px;
+    background: #3cd191;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 10px;
+}
+
+/* ------------------------- LOGIN PAGE ------------------------- */
+.login-page.new-ui {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Bellavita background image for login page using ::before */
+body.login-page.new-ui::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    opacity: 0.22; /* Increased background opacity */
+    pointer-events: none;
+    background: url("bellavita.jpg") center center/cover no-repeat;
+}
+
+.login-card {
+    position: relative;
+    z-index: 2;
+    background: rgba(255,255,255,0.5); /* Lowered login panel opacity */
+    padding: 35px;
+    border-radius: 18px;
+    text-align: center;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+.login-card h2 {
+    margin: 0 0 8px;
+}
+
+.subtitle {
+    margin-bottom: 20px;
+    opacity: 0.6;
+}
+
+.input-block {
+    text-align: left;
+    margin-bottom: 18px;
+}
+
+.input-block input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+}
+
+/* --- Responsive Flex Containers for Dashboard --- */
+.dashboard-flex-row {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-bottom: 24px;
+}
+.dashboard-flex-row .ui-card {
+    min-width: 250px;
+    flex: 1 1 300px;
+    box-sizing: border-box;
+}
+
+/* Camera controls layout */
+.control-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+}
+.control-row input[type="range"] {
+    flex: 1 1 auto;
+}
+.label-right {
+    order: 2; /* place the label to the right of the input */
+    margin-left: 8px;
+}
+.btn-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+/* ------------------------- DASHBOARD BACKGROUND ------------------------- */
+body.new-ui::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    opacity: 0.32; /* Increased background opacity for dashboard */
+    pointer-events: none;
+    background: url("bellavita.jpg") center center/cover no-repeat;
+}
+
+.ui-main, .ui-container, .ui-card {
+    position: relative;
+    z-index: 2;
+}
+
+/* ------------------------- DECIBEL METER ------------------------- */
+.meter-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.meter-bar {
+    position: relative;
+    flex: 1 1 auto;
+    height: 22px;
+    background: #f3f6f9;
+    border-radius: 12px;
+    overflow: hidden;
+}
+.meter-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0%;
+    background: #4caf50;
+    transition: width 160ms linear, background 180ms linear;
+    z-index: 3; /* sit above the zone background */
+}
+.meter-zones {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    z-index: 1; /* behind the fill */
+}
+.meter-zones .zone {
+    height: 100%;
+    opacity: 0.28;
+}
+.meter-zones .zone.green { background: #4caf50; width: 60%; }
+.meter-zones .zone.yellow { background: #ffeb3b; width: 25%; }
+.meter-zones .zone.red { background: #f44336; width: 15%; }
+.meter-value {
+    min-width: 70px;
+    font-weight: 700;
+}
+.meter-labels {
+    font-size: 12px;
+    color: #666;
+    margin-top: 8px;
+}
+.meter-labels .safe { color: #4caf50; font-weight: 600; }
+.meter-labels .moderate { color: #ffb300; font-weight: 600; }
+.meter-labels .strong { color: #f44336; font-weight: 600; }

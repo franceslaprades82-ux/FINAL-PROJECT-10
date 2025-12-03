@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CCTV Dashboard</title>
+<link rel="stylesheet" href="/styles.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body class="new-ui">
+
+<!-- Sidebar -->
+<div class="ui-sidebar">
+    <h2>Bella Vita Noise Sensor</h2>
+    <ul>
+        <li><a class="active" href="/">Dashboard</a></li>
+        <li><a href="/incidents">Incident Logs</a></li>
+    </ul>
+</div>
+
+<div class="ui-main">
+<div class="ui-container">
+
+    <header class="ui-header">
+        <h1>Dashboard</h1>
+        <a href="/logout" class="logout-chip">Logout</a>
+    </header>
+
+    <main>
+        <div class="dashboard-flex-row">
+
+            <!-- LEFT COLUMN -->
+            <div style="flex: 2; display: flex; flex-direction: column; gap: 24px;">
+
+                <!-- Camera Card -->
+                <section class="ui-card wide">
+                    <h3>Camera Feed</h3>
+                    <div class="cam-flex">
+                        <img id="stream" src="/video_feed" alt="Camera Stream">
+                        <span id="camera-status" class="status-chip">Checking...</span>
+                    </div>
+                </section>
+
+                <!-- Decibel Meter -->
+                <section class="ui-card wide">
+                    <h3>Decibel Meter</h3>
+                    <div class="meter-wrapper">
+                        <div id="obs-meter-container" class="meter-bar">
+                            <div id="obs-meter-bar" class="meter-fill"></div>
+                            <div id="obs-meter-zones" class="meter-zones">
+                                <div class="zone green"></div>
+                                <div class="zone yellow"></div>
+                                <div class="zone red"></div>
+                            </div>
+                        </div>
+                        <span id="obs-meter-value" class="meter-value">-- dB</span>
+                    </div>
+                    <p class="meter-labels">
+                        <span class="safe">Safe</span> &lt; 60dB |
+                        <span class="moderate">Moderate</span> 60–85dB |
+                        <span class="strong">Strong</span> &gt; 85dB
+                    </p>
+                </section>
+
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div style="display: flex; flex-direction: column; gap: 24px; flex: 1; min-width: 250px;">
+
+                <!-- Camera Controls -->
+                <section class="ui-card">
+                    <h3>Camera Controls</h3>
+
+                    <div class="control-row">
+                        <label for="servoX">Horizontal</label>
+                        <input id="servoX" type="range" min="0" max="176" value="90">
+                    </div>
+
+                    <div class="control-row">
+                        <input id="servoY" type="range" min="0" max="180" value="90">
+                        <label for="servoY" class="label-right">Vertical</label>
+                    </div>
+
+                    <div class="btn-row">
+                        <button id="buzzOn" class="primary-btn">Buzzer On</button>
+                        <button id="buzzOff" class="secondary-btn">Buzzer Off</button>
+                    </div>
+                </section>
+
+                <!-- Noise Card -->
+                <section class="ui-card">
+                    <h3>Current Noise Level</h3>
+                    <div class="ui-row"><strong>Location:</strong> bahay ni lwel</div>
+                    <div class="ui-row"><strong>Noise:</strong> <span id="current-noise">--</span> dB</div>
+                    <div class="ui-row"><strong>Status:</strong> <span id="noise-status">--</span></div>
+                </section>
+
+            </div>
+
+        </div>
+    </main>
+
+</div>
+</div>
+
+<script>
+const ESP_BASE = "http://192.168.1.10"; // ESP32 IP
+let strongThreshold = 85;
+let moderateThreshold = 60;
+
+// ---------------- OBS METER ----------------
+function updateObsMeter(decibel) {
+    const bar = document.getElementById('obs-meter-bar');
+    const value = document.getElementById('obs-meter-value');
+    const percent = Math.min(decibel, strongThreshold) / strongThreshold * 100;
+    bar.style.width = percent + '%';
+    value.textContent = decibel.toFixed(0) + ' dB';
+
+    if (decibel < moderateThreshold) bar.style.background = '#4caf50';
+    else if (decibel < strongThreshold) bar.style.background = '#ffeb3b';
+    else bar.style.background = '#f44336';
+}
+
+function setNoiseLevel(decibel) {
+    document.getElementById('current-noise').textContent = decibel.toFixed(0);
+    updateObsMeter(decibel);
+
+    const status = document.getElementById('noise-status');
+    if (decibel < moderateThreshold) status.textContent = "Safe";
+    else if (decibel < strongThreshold) status.textContent = "Moderate";
+    else status.textContent = "Strong";
+}
+
+// ---------------- SERVO CONTROLS ----------------
+function postServo(endpoint, angle) {
+    return fetch(`${ESP_BASE}/${endpoint}`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({angle: Number(angle)})
+    });
+}
+
+document.getElementById('servoX').addEventListener('input', e => {
+    const v = e.target.value;
+    postServo('servo_x', v)
+        .then(r => r.json())
+        .then(res => console.log('servoX moved:', res))
+        .catch(err => console.log('servoX error', err));
+});
+
+document.getElementById('servoY').addEventListener('input', e => {
+    const v = e.target.value;
+    postServo('servo_y', v)
+        .then(r => r.json())
+        .then(res => console.log('servoY moved:', res))
+        .catch(err => console.log('servoY error', err));
+});
+
+// ---------------- BUZZER ----------------
+function postBuzzer(on) {
+    const btn = on ? document.getElementById('buzzOn') : document.getElementById('buzzOff');
+    btn.disabled = true;
+    return fetch(`${ESP_BASE}/buzzer`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({on: on ? 1 : 0})
+    })
+    .then(r => {
+        if (!r.ok) throw new Error('buzzer request failed');
+        Swal.fire({toast:true, position:'top-end', showConfirmButton:false, timer:900, icon:'success', title: on ? 'Buzzer ON' : 'Buzzer OFF'});
+    })
+    .catch(err => {
+        console.error('Buzzer error', err);
+        Swal.fire({toast:true, position:'top-end', showConfirmButton:false, timer:1500, icon:'error', title:'Buzzer request failed'});
+    })
+    .finally(() => btn.disabled = false);
+}
+
+document.getElementById('buzzOn').addEventListener('click', () => postBuzzer(true));
+document.getElementById('buzzOff').addEventListener('click', () => postBuzzer(false));
+
+// ---------------- CAMERA STATUS ----------------
+const cameraImg = document.getElementById('stream');
+const cameraStatus = document.getElementById('camera-status');
+
+// Use MJPEG stream for camera feed (no snapshot polling)
+cameraImg.src = `${ESP_BASE}/stream`;
+cameraImg.onerror = () => { cameraStatus.textContent = "Disconnected"; };
+cameraImg.onload = () => { cameraStatus.textContent = "Connected"; };
+
+
+
+// ---------------- NOISE POLLING ----------------
+function pollNoise() {
+    fetch(`${ESP_BASE}/noise`)
+        .then(r => r.json())
+        .then(data => { if(data.db!==undefined) setNoiseLevel(data.db); })
+        .catch(err => console.log("Noise sensor error:", err));
+}
+pollNoise();
+setInterval(pollNoise, 500);
+</script>
+
+</body>
+</html>
